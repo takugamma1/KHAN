@@ -1,0 +1,39 @@
+{%- comment -%}
+  S4 — Slogan reprise (spec §2 / pattern D). Light, mostly typographic. Two lines reveal on enter,
+  second slightly delayed. Repetition is intentional. Light bg carries into S5, which darkens
+  within its own scroll.
+{%- endcomment -%}
+
+<section
+  id="khan-reprise-{{ section.id }}"
+  class="khan-scene khan-reprise-scene"
+  data-khan-scene="reprise"
+>
+  <div class="khan-reprise">
+    {%- if section.settings.line_1 != blank -%}
+      <p class="khan-reprise__line khan-display khan-display--sm">{{ section.settings.line_1 }}</p>
+    {%- endif -%}
+    {%- if section.settings.line_2 != blank -%}
+      <p class="khan-reprise__line khan-display khan-display--sm">{{ section.settings.line_2 }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+.khan-reprise-scene { background: var(--khan-bg-light); color: var(--khan-text-on-light); }
+.khan-reprise { max-width: 30ch; margin: 0 auto; padding: var(--khan-sp-section) 6vw; text-align: center; }
+.khan-reprise__line + .khan-reprise__line { margin-top: .2em; color: var(--khan-grey); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "KHAN · S4 Reprise",
+  "tag": "section",
+  "class": "khan-section khan-section--reprise",
+  "settings": [
+    { "type": "text", "id": "line_1", "label": "Line 1", "default": "The decision precedes the discipline." },
+    { "type": "text", "id": "line_2", "label": "Line 2", "default": "The discipline precedes the result." }
+  ],
+  "presets": [ { "name": "KHAN · S4 Reprise" } ]
+}
+{% endschema %}

@@ -1,0 +1,129 @@
+/*
+  KHAN — shared component atoms (buttons, badges, chips, asterisk, eyebrow, USP rows)
+  + scroll-scene layout primitives. Tokens come from khan-tokens.css. Component specs
+  pulled from Figma (Buttons 6:984 — 22px pad, ls 3.3, 10° cut; 90/9/1 colour rule).
+  Section-specific layout lives in each section's own {% stylesheet %} block.
+*/
+
+/* ============================ Scene primitives ============================ */
+.khan-scene { position: relative; color: var(--khan-text-on-dark); }
+.khan-stage { position: relative; width: 100%; height: 100vh; overflow: visible; } /* never clip product layers (S3) */
+.khan-layer { position: absolute; inset: 0; }
+.khan-layer--cover { object-fit: cover; width: 100%; height: 100%; }
+.khan-canvas { display: block; width: 100%; height: 100%; }
+.khan-scene img, .khan-scene video, .khan-scene canvas { max-width: none; }
+
+/* ============================ Pattern E — logo pulse ============================ */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes khan-pulse { 0%,100% { transform: scale(1); opacity: .92; } 50% { transform: scale(1.04); opacity: 1; } }
+  .khan-logo-pulse { animation: khan-pulse var(--khan-pulse-dur) ease-in-out infinite; will-change: transform, opacity; }
+}
+
+/* ============================ Eyebrow ============================ */
+.khan-eyebrow {
+  font-family: var(--khan-font-ui);
+  font-weight: 800;
+  font-size: var(--khan-fz-11);
+  letter-spacing: var(--khan-ls-ui);
+  text-transform: uppercase;
+  color: var(--khan-grey);
+  display: inline-flex; align-items: center; gap: var(--khan-sp-8);
+}
+.khan-eyebrow__num { color: var(--khan-blood); }
+
+/* ============================ Buttons (10° cut — NOT pills) ============================ */
+.khan-btn {
+  --_cut: var(--khan-btn-cut);
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--khan-sp-10);
+  padding: var(--khan-btn-pad-y) var(--khan-btn-pad-x);
+  font-family: var(--khan-font-ui);
+  font-weight: 800; font-size: var(--khan-fz-11);
+  letter-spacing: var(--khan-ls-ui); text-transform: uppercase;
+  line-height: 1; text-decoration: none; cursor: pointer;
+  border: 0; background: var(--khan-white); color: var(--khan-black);
+  /* asymmetric 10° corner cut (top-left + bottom-right), echoes K/A/H/N geometry */
+  clip-path: polygon(var(--_cut) 0, 100% 0, 100% calc(100% - var(--_cut)), calc(100% - var(--_cut)) 100%, 0 100%, 0 var(--_cut));
+  transition: filter var(--khan-pulse-dur, .2s);
+  transition: transform .2s var(--khan-ease), filter .2s var(--khan-ease);
+}
+.khan-btn:hover { filter: brightness(1.06); }
+.khan-btn:active { transform: translateY(1px); }
+.khan-btn__icon { width: 13px; height: 13px; flex: 0 0 auto; }
+
+.khan-btn--reserve { background: var(--khan-blood); color: var(--khan-white); gap: var(--khan-sp-16); }
+.khan-btn--reserve .khan-btn__count { opacity: .65; letter-spacing: var(--khan-ls-2); font-weight: 400; }
+
+.khan-btn--wine { background: var(--khan-wine); color: var(--khan-white); }
+.khan-btn--ink  { background: var(--khan-ink);  color: var(--khan-white); }
+
+/* outline / ghost — transparent + 3px underline progress bar (signature detail) */
+.khan-btn--outline {
+  background: transparent; color: currentColor; clip-path: none;
+  padding-left: 0; padding-right: 0; position: relative;
+}
+.khan-btn--outline::after {
+  content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
+  background: currentColor; transform: scaleX(.28); transform-origin: left;
+  transition: transform .25s var(--khan-ease);
+}
+.khan-btn--outline:hover::after { transform: scaleX(1); }
+.khan-btn--outline:hover { filter: none; }
+
+/* ============================ Asterisk mark ============================ */
+.khan-asterisk { display: inline-block; vertical-align: middle; color: var(--khan-blood); line-height: 0; }
+.khan-asterisk svg { display: block; width: 1em; height: 1em; }
+.khan-asterisk--xs { font-size: 12px; } /* corner stamps / separators 10–14 */
+.khan-asterisk--sm { font-size: 16px; } /* badge prefix 14–18 */
+.khan-asterisk--md { font-size: 22px; } /* USP row prefix 20–24 */
+.khan-asterisk--lg { font-size: 40px; }
+
+/* ============================ Badges ============================ */
+.khan-badge {
+  display: inline-flex; align-items: center; gap: var(--khan-sp-8);
+  font-family: var(--khan-font-ui); font-weight: 800; font-size: var(--khan-fz-11);
+  letter-spacing: var(--khan-ls-ui); text-transform: uppercase;
+}
+.khan-badge--pill { /* Final Drop — scarcity */
+  background: var(--khan-blood); color: var(--khan-white);
+  border-radius: var(--khan-radius-pill); padding: 8px 16px;
+}
+.khan-badge--edition { /* 047 / 500 — sharp receipt block */
+  background: transparent; color: currentColor; border: 1px solid currentColor;
+  border-radius: 0; padding: 7px 12px;
+}
+
+/* ============================ Chips (pills OK here) ============================ */
+.khan-chip {
+  display: inline-flex; align-items: center; gap: var(--khan-sp-8);
+  border-radius: var(--khan-radius-pill);
+  border: 1px solid var(--khan-line-on-dark);
+  background: rgba(255,255,255,.04); backdrop-filter: blur(6px);
+  padding: 8px 14px;
+  font-family: var(--khan-font-ui); font-weight: 600; font-size: var(--khan-fz-11);
+  letter-spacing: var(--khan-ls-2); text-transform: uppercase; color: var(--khan-text-on-dark);
+}
+.khan-chip--light { color: var(--khan-text-on-light); border-color: var(--khan-line-on-light); background: rgba(0,0,0,.03); }
+
+/* ============================ USP row ============================ */
+.khan-usp { display: flex; align-items: flex-start; gap: var(--khan-sp-14); padding: var(--khan-sp-14) 0; border-top: 1px solid var(--khan-line-on-dark); }
+.khan-usp__body { display: flex; flex-direction: column; gap: 2px; }
+.khan-usp__label { font-family: var(--khan-font-ui); font-weight: 800; font-size: var(--khan-fz-12); letter-spacing: var(--khan-ls-2); text-transform: uppercase; }
+.khan-usp__desc { font-size: var(--khan-fz-12); color: var(--khan-white-70); }
+.khan-usp--light { border-color: var(--khan-line-on-light); }
+.khan-usp--light .khan-usp__desc { color: rgba(0,0,0,.6); }
+
+/* ============================ Display headings ============================ */
+.khan-display {
+  font-family: var(--khan-font-display); font-weight: 900;
+  font-size: var(--khan-fz-display); line-height: .92; letter-spacing: var(--khan-ls-tight);
+  text-transform: uppercase; margin: 0;
+}
+.khan-display--sm { font-size: var(--khan-fz-display-sm); }
+.khan-display em { color: var(--khan-blood); font-style: normal; } /* red second line */
+
+/* ============================ Reduced-motion statics ============================ */
+@media (prefers-reduced-motion: reduce) {
+  .khan-logo-pulse { animation: none; }
+}
+/* JS adds .khan-reduced to the scene root when reduced-motion is on; final composition shows. */

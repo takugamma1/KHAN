@@ -1,0 +1,21 @@
+{%- comment -%}
+  KHAN asterisk — the brand's 8-petal radial mark (3rd mark, alongside wordmark + skull).
+  Colour = blood fill (.khan-asterisk) with a vivid red outline that gives the "lit" quality.
+  Size via a modifier class passed in `class` (khan-asterisk--xs|sm|md|lg).
+  TODO(krasi): replace placeholder petal geometry with the official Figma asterisk export.
+  Usage: {%- render 'khan-asterisk', class: 'khan-asterisk--md' -%}
+{%- endcomment -%}
+<span class="khan-asterisk {{ class }}" aria-hidden="true">
+  <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#e63946" stroke-width="0.4" stroke-linejoin="round">
+      <path d="M12 12 C12.7 7 12.4 3.5 12 1.5 C11.6 3.5 11.3 7 12 12 Z"/>
+      <path d="M12 12 C12.7 7 12.4 3.5 12 1.5 C11.6 3.5 11.3 7 12 12 Z" transform="rotate(45 12 12)"/>
+      <path d="M12 12 C12.7 7 12.4 3.5 12 1.5 C11.6 3.5 11.3 7 12 12 Z" transform="rotate(90 12 12)"/>
+      <path d="M12 12 C12.7 7 12.4 3.5 12 1.5 C11.6 3.5 11.3 7 12 12 Z" transform="rotate(135 12 12)"/>
+      <path d="M12 12 C12.7 7 12.4 3.5 12 1.5 C11.6 3.5 11.3 7 12 12 Z" transform="rotate(180 12 12)"/>
+      <path d="M12 12 C12.7 7 12.4 3.5 12 1.5 C11.6 3.5 11.3 7 12 12 Z" transform="rotate(225 12 12)"/>
+      <path d="M12 12 C12.7 7 12.4 3.5 12 1.5 C11.6 3.5 11.3 7 12 12 Z" transform="rotate(270 12 12)"/>
+      <path d="M12 12 C12.7 7 12.4 3.5 12 1.5 C11.6 3.5 11.3 7 12 12 Z" transform="rotate(315 12 12)"/>
+    </g>
+  </svg>
+</span>

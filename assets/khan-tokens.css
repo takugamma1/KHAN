@@ -1,0 +1,78 @@
+/*
+  KHAN design tokens — single source of truth = Figma file SNcSGQ9Qm7GtsRwOUrBBEH.
+  Values pulled via Figma MCP (Color card, Typography 4:193, Buttons 6:984).
+  Rule: 90 / 9 / 1 — 90% black & white, 9% wine (#3B0211), 1% blood (#560B1E).
+  Blood is for CTAs + scarcity ONLY. Where a value isn't yet confirmed in Figma,
+  a TODO(krasi) marks the node to re-query. Do not eyeball from comps.
+*/
+:root {
+  /* ---- Color · neutrals (Figma color/*) ---- */
+  --khan-white: #ffffff;   /* color/white/solid */
+  --khan-black: #000000;   /* color/black/solid */
+  --khan-base:  #0e0e0e;   /* color/grey/5  — primary dark surface */
+  --khan-ink:   #2a2a2a;   /* color/grey/16 — Mine Shaft */
+  --khan-grey:  #8a8a8a;   /* color/grey/54 — muted label text */
+
+  /* ---- Color · brand reds (the 9% + 1%) ---- */
+  --khan-blood: #560b1e;   /* color/rose/19 — Cab Sav — actions + scarcity ONLY */
+  --khan-wine:  #3b0211;   /* color/rose/12 — Chocolate — depth */
+
+  /* ---- Surfaces ---- */
+  --khan-bg-dark:  var(--khan-base);
+  --khan-bg-light: #ffffff;            /* Backgrounds/Primary */
+  --khan-text-on-dark:  #ffffff;
+  --khan-text-on-light: #111111;       /* TODO(krasi): confirm on-light text token in Figma */
+
+  /* ---- Alpha ramps (white-on-dark — Figma color/white/* steps) ---- */
+  --khan-white-45: rgba(255,255,255,.45);
+  --khan-white-65: rgba(255,255,255,.65);
+  --khan-white-70: rgba(255,255,255,.70);
+  --khan-line-on-dark:  rgba(255,255,255,.10);
+  --khan-line-on-light: rgba(0,0,0,.12);   /* TODO(krasi): confirm hairline on light */
+
+  /* gradient stops (Figma rose/12 alpha — used in card glows) */
+  --khan-wine-30: rgba(59,2,17,.30);
+  --khan-wine-00: rgba(59,2,17,0);
+  --khan-blood-40: rgba(86,11,30,.40);
+
+  /* ---- Typography ---- */
+  /* Display = Nexa (production) → Cabinet Grotesk (Adobe fallback) → Futura (Figma stand-in) */
+  --khan-font-display: "Nexa", "Cabinet Grotesk", "Futura", "Arial Narrow", sans-serif;
+  --khan-font-ui:      "Inter", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --khan-font-body:    var(--khan-font-ui);
+
+  /* type scale (Figma font-size/*) */
+  --khan-fz-9: 9px;  --khan-fz-10: 10px; --khan-fz-11: 11px; --khan-fz-12: 12px;
+  --khan-fz-14: 14px; --khan-fz-15: 15px; --khan-fz-18: 18px;
+  --khan-fz-display:    clamp(48px, 12vw, 180px);
+  --khan-fz-display-sm: clamp(32px, 7vw, 96px);
+
+  /* letter-spacing (Figma letter spacing/*) */
+  --khan-ls-tight: -1.68px;  /* big display */
+  --khan-ls-ui:    3.3px;    /* Semantic/Button upper + eyebrows */
+  --khan-ls-2:     2.2px;
+
+  /* ---- Spacing (Figma item spacing/*) ---- */
+  --khan-sp-2: 2px;  --khan-sp-4: 4px;  --khan-sp-8: 8px;  --khan-sp-10: 10px;
+  --khan-sp-14: 14px; --khan-sp-16: 16px; --khan-sp-22: 22px;
+  --khan-sp-section: clamp(64px, 10vw, 160px);
+
+  /* ---- Shape ---- */
+  --khan-radius-surface: 0px;     /* sharp corners on surfaces */
+  --khan-radius-pill: 999px;      /* pills are for CHIPS only */
+  --khan-btn-cut: 10px;           /* 10° corner cut (clip-path in khan-button) */
+  --khan-btn-pad-x: 22px;         /* Figma "Pad 22px" */
+  --khan-btn-pad-y: 13px;
+
+  /* ---- Motion ---- */
+  --khan-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --khan-pulse-dur: 3.2s;         /* PATTERN E — hero logo breathing */
+
+  /* ---- Scene layering (z-order back→front for pinned stages S1/S3) ---- */
+  --khan-z-bg: 0; --khan-z-video: 1; --khan-z-product: 2;
+  --khan-z-smoke: 3; --khan-z-text: 4; --khan-z-ui: 5; --khan-z-nav: 50;
+}
+
+@media (max-width: 749px) {
+  :root { --khan-fz-display: clamp(40px, 18vw, 96px); }
+}

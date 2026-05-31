@@ -1,0 +1,156 @@
+{%- comment -%}
+  S1 — Hero + Brand identity. ONE pinned multi-layer scene (spec §2 / patterns C + A + E).
+  Layers (z back→front): rocks (static anchor) · hero video (masked through rocks) ·
+  smoke sequence (rises from rock base) · logo (CSS pulse) · liquid bar (docks up on scroll) ·
+  identity heading + rosette badges. Handoff to S2: smoke is left on screen (not reset).
+{%- endcomment -%}
+
+<section
+  id="khan-hero-{{ section.id }}"
+  class="khan-scene khan-hero"
+  data-khan-scene="hero"
+  data-scroll-length="{{ section.settings.scroll_length }}%"
+>
+  <div class="khan-hero__stage khan-stage">
+
+    {%- comment -%} 1 — rocks: the static anchor everything animates against {%- endcomment -%}
+    {%- if section.settings.rocks_image != blank -%}
+      <img class="khan-hero__rocks khan-layer khan-layer--cover"
+           src="{{ section.settings.rocks_image | image_url: width: 2560 }}"
+           srcset="{{ section.settings.rocks_image | image_url: width: 1280 }} 1280w, {{ section.settings.rocks_image | image_url: width: 2560 }} 2560w"
+           alt="" width="2560" height="1440" loading="eager">
+    {%- else -%}
+      <div class="khan-hero__rocks khan-layer khan-hero__rocks--placeholder"></div>
+    {%- endif -%}
+
+    {%- comment -%} 2 — hero video, low opacity, shown only THROUGH the rock silhouette {%- endcomment -%}
+    {%- if section.settings.hero_video != blank -%}
+      <div class="khan-hero__video khan-layer"
+        {%- if section.settings.rocks_image != blank %} style="-webkit-mask-image:url({{ section.settings.rocks_image | image_url: width: 1600 }});mask-image:url({{ section.settings.rocks_image | image_url: width: 1600 }})"{% endif -%}>
+        <video class="khan-layer--cover" src="{{ section.settings.hero_video | asset_url }}" autoplay muted loop playsinline preload="metadata"></video>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} 5 — red smoke sequence (Pattern A). Empty base path → static, no scrub. {%- endcomment -%}
+    <canvas class="khan-hero__smoke khan-layer khan-canvas"
+      data-seq-base="{{ section.settings.smoke_seq_base }}"
+      data-seq-base-mobile="{{ section.settings.smoke_seq_base_mobile }}"
+      data-seq-frames="{{ section.settings.smoke_seq_frames }}"
+      {%- if section.settings.smoke_poster != blank %} data-poster="{{ section.settings.smoke_poster | image_url: width: 1600 }}"{% endif -%}></canvas>
+
+    {%- comment -%} 3 — logo with pulsing glow (Pattern E) {%- endcomment -%}
+    <div class="khan-hero__logo khan-layer">
+      <span class="khan-hero__glow khan-logo-pulse" aria-hidden="true"></span>
+      {%- if section.settings.logo_image != blank -%}
+        <img class="khan-hero__wordmark" src="{{ section.settings.logo_image | image_url: width: 1000 }}" alt="{{ shop.name }}" width="1000" height="320">
+      {%- else -%}
+        <span class="khan-hero__wordmark khan-display">KHAN</span>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} 4 — liquid bar: starts at hero-centre, docks to the top on scroll {%- endcomment -%}
+    <nav class="khan-hero__liquid-bar" data-hero-offset="{{ section.settings.bar_offset }}vh" aria-label="{{ section.settings.eyebrow | escape }}">
+      {%- render 'khan-asterisk', class: 'khan-asterisk--xs' -%}
+      <span class="khan-hero__eyebrow">{{ section.settings.eyebrow | default: 'SUPPLEMENTS DIVISION' }}</span>
+      {%- render 'khan-asterisk', class: 'khan-asterisk--xs' -%}
+    </nav>
+
+    {%- comment -%} 6a — identity heading {%- endcomment -%}
+    <div class="khan-hero__identity">
+      {%- if section.settings.identity_heading != blank -%}
+        <h2 class="khan-display khan-display--sm">{{ section.settings.identity_heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.identity_subheading != blank -%}
+        <p class="khan-hero__sub">{{ section.settings.identity_subheading }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} 6b — rosette feature badges (stagger in) {%- endcomment -%}
+    {%- if section.blocks.size > 0 -%}
+      <ul class="khan-hero__badges" role="list">
+        {%- for block in section.blocks -%}
+          <li class="khan-hero__badge" {{ block.shopify_attributes }}>
+            {%- render 'khan-asterisk', class: 'khan-asterisk--md' -%}
+            <span class="khan-usp__body">
+              <span class="khan-usp__label">{{ block.settings.title }}</span>
+              {%- if block.settings.body != blank -%}<span class="khan-usp__desc">{{ block.settings.body }}</span>{%- endif -%}
+            </span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{%- comment -%} ============================ scoped layout ============================ {%- endcomment -%}
+{% stylesheet %}
+.khan-hero { background: var(--khan-base); }
+.khan-hero__rocks--placeholder { background: radial-gradient(120% 90% at 50% 0%, #1b1517 0%, var(--khan-base) 62%); }
+.khan-hero__video { opacity: .35; pointer-events: none; -webkit-mask-size: cover; mask-size: cover; -webkit-mask-position: center; mask-position: center; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+.khan-hero__video video { width: 100%; height: 100%; object-fit: cover; }
+.khan-hero__smoke { pointer-events: none; }
+.khan-hero__logo { display: grid; place-items: center; }
+.khan-hero__glow { position: absolute; width: 62vmin; height: 62vmin; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 60%); mix-blend-mode: screen; }
+.khan-hero__wordmark { position: relative; max-width: 60vw; height: auto; color: var(--khan-white); }
+span.khan-hero__wordmark { font-size: clamp(48px, 16vw, 220px); line-height: .9; }
+.khan-hero__liquid-bar { position: absolute; left: 50%; top: 24px; transform: translateX(-50%); display: inline-flex; align-items: center; gap: var(--khan-sp-14); padding: 14px 22px; border: 1px solid var(--khan-line-on-dark); border-radius: var(--khan-radius-pill); background: rgba(255,255,255,.04); backdrop-filter: blur(8px); white-space: nowrap; z-index: var(--khan-z-nav); }
+.khan-hero__eyebrow { font-family: var(--khan-font-ui); font-weight: 800; font-size: var(--khan-fz-11); letter-spacing: var(--khan-ls-ui); text-transform: uppercase; color: var(--khan-white-70); }
+.khan-hero__identity { position: absolute; left: 6vw; bottom: 12vh; max-width: 42ch; z-index: var(--khan-z-text); }
+.khan-hero__sub { color: var(--khan-white-70); margin-top: 12px; max-width: 36ch; }
+.khan-hero__badges { position: absolute; right: 6vw; bottom: 12vh; width: min(34ch, 42vw); list-style: none; margin: 0; padding: 0; z-index: var(--khan-z-ui); }
+.khan-hero__badge { display: flex; gap: var(--khan-sp-14); align-items: flex-start; padding: var(--khan-sp-14) 0; border-top: 1px solid var(--khan-line-on-dark); }
+@media (max-width: 749px) {
+  .khan-hero__identity, .khan-hero__badges { position: static; width: auto; padding: 0 6vw; max-width: none; }
+  .khan-hero__identity { margin-top: 58vh; }
+  .khan-hero__badges { margin-top: 24px; padding-bottom: 8vh; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "KHAN · S1 Hero+Identity",
+  "tag": "section",
+  "class": "khan-section khan-section--hero",
+  "settings": [
+    { "type": "header", "content": "Scene timing" },
+    { "type": "range", "id": "scroll_length", "label": "Scroll length (% of viewport)", "min": 150, "max": 400, "step": 10, "default": 260, "info": "Total pinned scroll distance. Tune so the beat reads in 3–5 notches." },
+    { "type": "range", "id": "bar_offset", "label": "Liquid bar start offset (vh)", "min": 20, "max": 50, "step": 1, "default": 38, "info": "How far below the top the bar starts before docking up." },
+    { "type": "header", "content": "Layers" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow / liquid bar label", "default": "SUPPLEMENTS DIVISION" },
+    { "type": "image_picker", "id": "rocks_image", "label": "Rocks plate (static anchor)", "info": "Full-bleed dark rock face. Manifest: rocks.webp" },
+    { "type": "text", "id": "hero_video", "label": "Hero inner video — asset filename", "info": "Low-opacity video shown through the rocks. Upload to assets/, e.g. hero_video.mp4. Leave blank to hide." },
+    { "type": "image_picker", "id": "logo_image", "label": "KHAN wordmark (logo)", "info": "Manifest: logo.svg. Falls back to text “KHAN”." },
+    { "type": "header", "content": "Red smoke sequence (Pattern A)" },
+    { "type": "text", "id": "smoke_seq_base", "label": "Smoke frames base URL", "info": "Public base path up to the frame number, e.g. …/smoke_seq/smoke_ — JS appends 0000.webp. Leave blank to disable (static)." },
+    { "type": "text", "id": "smoke_seq_base_mobile", "label": "Smoke frames base URL (mobile set)" },
+    { "type": "range", "id": "smoke_seq_frames", "label": "Smoke frame count", "min": 0, "max": 150, "step": 1, "default": 0, "info": "≤150. 0 = disabled until frames are produced." },
+    { "type": "image_picker", "id": "smoke_poster", "label": "Smoke poster (reduced-motion / preload still)" },
+    { "type": "header", "content": "Identity" },
+    { "type": "text", "id": "identity_heading", "label": "Identity heading", "default": "BUILT ON DISCIPLINE" },
+    { "type": "textarea", "id": "identity_subheading", "label": "Identity subheading", "default": "FORGED BY DISCIPLINE" }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Feature badge",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "SCIENCE BACKED" },
+        { "type": "text", "id": "body", "label": "Description" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "KHAN · S1 Hero+Identity",
+      "blocks": [
+        { "type": "badge", "settings": { "title": "SCIENCE BACKED" } },
+        { "type": "badge", "settings": { "title": "NO COMPROMISES" } },
+        { "type": "badge", "settings": { "title": "BUILT FOR PERFORMANCE" } },
+        { "type": "badge", "settings": { "title": "RELENTLESS BY NATURE" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

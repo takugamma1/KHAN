@@ -1,0 +1,57 @@
+{%- comment -%}
+  S2 — Slogan (spec §2 / pattern C). The red smoke carried over from S1 dissolves into white
+  here — never a hard cut. Mid-scroll shows a true in-between (smoke thinning, white bleeding in).
+  Ends fully white so S3 (light) opens with no tonal jump.
+{%- endcomment -%}
+
+<section
+  id="khan-slogan-{{ section.id }}"
+  class="khan-scene khan-slogan"
+  data-khan-scene="slogan"
+  data-scroll-length="{{ section.settings.scroll_length }}%"
+>
+  <div class="khan-slogan__stage khan-stage">
+    {%- if section.settings.smoke_seq_base != blank -%}
+      <canvas class="khan-slogan__smoke khan-layer khan-canvas"
+        data-seq-base="{{ section.settings.smoke_seq_base }}"
+        data-seq-base-mobile="{{ section.settings.smoke_seq_base_mobile }}"
+        data-seq-frames="{{ section.settings.smoke_seq_frames }}"></canvas>
+    {%- endif -%}
+    <div class="khan-slogan__wash khan-layer" aria-hidden="true"></div>
+    <div class="khan-slogan__text">
+      {%- if section.settings.slogan_text != blank -%}
+        <h2 class="khan-display khan-display--sm">{{ section.settings.slogan_text }}</h2>
+      {%- endif -%}
+      {%- if section.settings.slogan_support != blank -%}
+        <div class="khan-slogan__support rte">{{ section.settings.slogan_support }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.khan-slogan { background: var(--khan-wine); }
+.khan-slogan__stage { display: grid; place-items: center; text-align: center; }
+.khan-slogan__wash { background: var(--khan-bg-light); opacity: 0; }
+.khan-slogan__text { position: relative; z-index: var(--khan-z-text); color: var(--khan-text-on-light); max-width: 28ch; padding: 0 6vw; }
+.khan-slogan__support { margin-top: 18px; color: rgba(0,0,0,.6); font-family: var(--khan-font-ui); }
+.khan-slogan.khan-reduced { background: var(--khan-bg-light); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "KHAN · S2 Slogan",
+  "tag": "section",
+  "class": "khan-section khan-section--slogan",
+  "settings": [
+    { "type": "range", "id": "scroll_length", "label": "Scroll length (%)", "min": 100, "max": 280, "step": 10, "default": 160 },
+    { "type": "text", "id": "slogan_text", "label": "Slogan", "default": "THE WORK BEFORE THE WORK" },
+    { "type": "richtext", "id": "slogan_support", "label": "Supporting text" },
+    { "type": "header", "content": "Smoke continuation (optional)" },
+    { "type": "text", "id": "smoke_seq_base", "label": "Smoke frames base URL", "info": "Continuation of S1's smoke. Leave blank to use a CSS-only white wash." },
+    { "type": "text", "id": "smoke_seq_base_mobile", "label": "Smoke frames base URL (mobile)" },
+    { "type": "range", "id": "smoke_seq_frames", "label": "Smoke frame count", "min": 0, "max": 150, "step": 1, "default": 0 }
+  ],
+  "presets": [ { "name": "KHAN · S2 Slogan" } ]
+}
+{% endschema %}

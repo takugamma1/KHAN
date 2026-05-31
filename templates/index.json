@@ -1,0 +1,42 @@
+{
+  "sections": {
+    "s1_hero": {
+      "type": "khan-hero-identity",
+      "blocks": {
+        "b1": { "type": "badge", "settings": { "title": "SCIENCE BACKED" } },
+        "b2": { "type": "badge", "settings": { "title": "NO COMPROMISES" } },
+        "b3": { "type": "badge", "settings": { "title": "BUILT FOR PERFORMANCE" } },
+        "b4": { "type": "badge", "settings": { "title": "RELENTLESS BY NATURE" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4"],
+      "settings": {}
+    },
+    "s2_slogan": { "type": "khan-slogan", "settings": {} },
+    "s3_duo": {
+      "type": "khan-product-duo",
+      "blocks": {
+        "c1": { "type": "chip", "settings": { "label": "SIX CLINICAL DOSES" } },
+        "c2": { "type": "chip", "settings": { "label": "NO FILLER" } },
+        "c3": { "type": "chip", "settings": { "label": "NO SWEETENERS" } },
+        "c4": { "type": "chip", "settings": { "label": "CLEAN ENERGY" } },
+        "c5": { "type": "chip", "settings": { "label": "PERFORMANCE DRIVEN" } }
+      },
+      "block_order": ["c1", "c2", "c3", "c4", "c5"],
+      "settings": {}
+    },
+    "s4_reprise": { "type": "khan-slogan-reprise", "settings": {} },
+    "s5_footer": {
+      "type": "khan-footer",
+      "blocks": {
+        "col1": { "type": "column", "settings": { "heading": "SHOP" } },
+        "col2": { "type": "column", "settings": { "heading": "BRAND" } },
+        "col3": { "type": "column", "settings": { "heading": "COMPANY" } },
+        "col4": { "type": "column", "settings": { "heading": "RESOURCES" } },
+        "col5": { "type": "column", "settings": { "heading": "CONNECT" } }
+      },
+      "block_order": ["col1", "col2", "col3", "col4", "col5"],
+      "settings": {}
+    }
+  },
+  "order": ["s1_hero", "s2_slogan", "s3_duo", "s4_reprise", "s5_footer"]
+}

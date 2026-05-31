@@ -1,0 +1,27 @@
+{%- comment -%}
+  KHAN button — 10° corner cut (NOT a pill), 22px pad, Inter Extra Bold upper / ls 3.3 (Figma 6:984).
+  Params:
+    label   (string)  required
+    href    (url)      default '#'
+    variant (string)   primary | reserve | outline | wine | ink   (default primary)
+    count   (string)   right segment for the split "reserve" button, e.g. "047 / 500"
+    icon    (boolean)  show trailing arrow
+    tag     (string)   a | button   (default a)
+    type    (string)   button type when tag=button (default 'button')
+    class   (string)   extra classes
+  Usage: {%- render 'khan-button', label: 'Open the product', href: product.url, icon: true -%}
+{%- endcomment -%}
+{%- liquid
+  assign variant = variant | default: 'primary'
+  assign tag = tag | default: 'a'
+-%}
+{%- capture inner -%}
+  <span class="khan-btn__label">{{ label }}</span>
+  {%- if variant == 'reserve' and count != blank -%}<span class="khan-btn__count">{{ count }}</span>{%- endif -%}
+  {%- if icon -%}<svg class="khan-btn__icon" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 6.5h10M7 2.5l4 4-4 4"/></svg>{%- endif -%}
+{%- endcapture -%}
+{%- if tag == 'button' -%}
+  <button type="{{ type | default: 'button' }}" class="khan-btn khan-btn--{{ variant }} {{ class }}">{{ inner }}</button>
+{%- else -%}
+  <a href="{{ href | default: '#' }}" class="khan-btn khan-btn--{{ variant }} {{ class }}">{{ inner }}</a>
+{%- endif -%}

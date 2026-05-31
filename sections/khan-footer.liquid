@@ -1,0 +1,108 @@
+{%- comment -%}
+  S5 — Footer drop (spec §2 / patterns B + C). Jars drop onto stone via an MP4 that is scrubbed
+  by scroll and FREEZES on its last frame — plays once, never autoplays/loops (site speed). A
+  parallel scrubbed wash darkens the background light→dark to land on the dark footer. Footer nav
+  reveals once the video reaches its end.
+{%- endcomment -%}
+
+<section
+  id="khan-footer-{{ section.id }}"
+  class="khan-scene khan-footer"
+  data-khan-scene="footer"
+  data-scroll-length="{{ section.settings.scroll_length }}%"
+>
+  <div class="khan-footer__stage khan-stage">
+    <div class="khan-footer__bg khan-layer" aria-hidden="true"></div>
+
+    {%- if section.settings.footer_video != blank -%}
+      <video class="khan-footer__video khan-layer--cover" muted playsinline preload="metadata"
+        {%- if section.settings.footer_poster != blank %} poster="{{ section.settings.footer_poster | image_url: width: 1920 }}"{% endif -%}>
+        {%- if section.settings.footer_webm != blank -%}<source src="{{ section.settings.footer_webm | asset_url }}" type="video/webm">{%- endif -%}
+        <source src="{{ section.settings.footer_video | asset_url }}" type="video/mp4">
+      </video>
+    {%- elsif section.settings.footer_poster != blank -%}
+      <img class="khan-footer__video khan-layer--cover" src="{{ section.settings.footer_poster | image_url: width: 1920 }}" alt="" width="1920" height="1080" loading="lazy">
+    {%- endif -%}
+
+    <div class="khan-footer__nav">
+      <div class="khan-footer__wordmark">
+        {%- if section.settings.wordmark != blank -%}
+          <img src="{{ section.settings.wordmark | image_url: width: 1200 }}" alt="{{ shop.name }}" width="1200" height="380">
+        {%- else -%}
+          <span class="khan-display">KHAN</span>
+        {%- endif -%}
+      </div>
+      <div class="khan-footer__cols">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'column' -%}
+            <div class="khan-footer__col" {{ block.shopify_attributes }}>
+              {%- if block.settings.heading != blank -%}<h3 class="khan-footer__col-title">{{ block.settings.heading }}</h3>{%- endif -%}
+              {%- if block.settings.menu != blank -%}
+                <ul role="list">
+                  {%- for link in block.settings.menu.links -%}
+                    <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.khan-footer { background: var(--khan-base); color: var(--khan-text-on-dark); }
+.khan-footer__bg { background: var(--khan-bg-light); }
+.khan-footer__bg::after { content: ""; position: absolute; inset: 0; background: var(--khan-base); opacity: var(--khan-footer-dark, 0); }
+.khan-footer__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.khan-footer__nav { position: absolute; inset: auto 0 0 0; padding: 6vh 6vw; z-index: var(--khan-z-ui); display: grid; gap: 4vh; }
+.khan-footer__wordmark img { max-width: min(60vw, 720px); height: auto; }
+.khan-footer__cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 24px; }
+.khan-footer__col-title { font-family: var(--khan-font-ui); font-weight: 800; font-size: var(--khan-fz-11); letter-spacing: var(--khan-ls-ui); text-transform: uppercase; color: var(--khan-grey); margin: 0 0 12px; }
+.khan-footer__col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.khan-footer__col a { color: var(--khan-white-70); text-decoration: none; font-size: var(--khan-fz-14); }
+.khan-footer__col a:hover { color: var(--khan-white); }
+.khan-footer.khan-reduced .khan-footer__bg::after { opacity: 1; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "KHAN · S5 Footer drop",
+  "tag": "section",
+  "class": "khan-section khan-section--footer",
+  "settings": [
+    { "type": "range", "id": "scroll_length", "label": "Scroll length (%)", "min": 100, "max": 260, "step": 10, "default": 150 },
+    { "type": "header", "content": "Drop video (Pattern B — scrub once, freeze on last frame)" },
+    { "type": "text", "id": "footer_video", "label": "MP4 — asset filename", "info": "H.264, all-intra (GOP=1), no audio. Manifest: footer_drop.mp4" },
+    { "type": "text", "id": "footer_webm", "label": "WebM — asset filename (fallback source)", "info": "Manifest: footer_drop.webm" },
+    { "type": "image_picker", "id": "footer_poster", "label": "Poster — final landed frame", "info": "Reduced-motion still + preload. Manifest: footer_poster.webp" },
+    { "type": "header", "content": "Footer content" },
+    { "type": "image_picker", "id": "wordmark", "label": "KHAN wordmark", "info": "Falls back to text “KHAN”." }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "SHOP" },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "KHAN · S5 Footer drop",
+      "blocks": [
+        { "type": "column", "settings": { "heading": "SHOP" } },
+        { "type": "column", "settings": { "heading": "BRAND" } },
+        { "type": "column", "settings": { "heading": "COMPANY" } },
+        { "type": "column", "settings": { "heading": "RESOURCES" } },
+        { "type": "column", "settings": { "heading": "CONNECT" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,154 @@
+{%- comment -%}
+  S3 — Pre-workout + Apparel. ONE pinned scene (spec §2 / patterns C + A). The rotating jar and
+  the apparel model share one stage and overlap with NEITHER clipped (no overflow:hidden on the
+  product layers). Jar rotates → pre-workout UI staggers in → model fades up behind the jar →
+  apparel UI reveals. Opens light (matches S2's white end); closes light (matches S4).
+  UI atoms (button, chip) sourced from Figma; TODO(krasi): refine chips vs Figma node 6:864 and
+  the RESERVE split vs Figma 6:1053.
+{%- endcomment -%}
+
+{%- liquid
+  assign pre = all_products[section.settings.pre_product]
+  assign apparel = all_products[section.settings.apparel_product]
+  assign reserve_count = section.settings.reserve_start | append: ' / ' | append: section.settings.reserve_limit
+  assign archive_url = apparel.url | default: '#'
+-%}
+
+<section
+  id="khan-duo-{{ section.id }}"
+  class="khan-scene khan-duo"
+  data-khan-scene="product-duo"
+  data-scroll-length="{{ section.settings.scroll_length }}%"
+>
+  <div class="khan-duo__stage khan-stage">
+
+    {%- comment -%} 1 — light stage background (stays put) {%- endcomment -%}
+    {%- if section.settings.stage_bg != blank -%}
+      <img class="khan-duo__bg khan-layer khan-layer--cover" src="{{ section.settings.stage_bg | image_url: width: 2400 }}" alt="" width="2400" height="1350" loading="lazy">
+    {%- else -%}
+      <div class="khan-duo__bg khan-layer khan-duo__bg--placeholder"></div>
+    {%- endif -%}
+
+    {%- comment -%} 3 — apparel/model render, BEHIND the jar's resting spot (revealed on overlap) {%- endcomment -%}
+    {%- if section.settings.model_image != blank -%}
+      <img class="khan-duo__model" src="{{ section.settings.model_image | image_url: width: 1400 }}" alt="" width="1400" height="1750" loading="lazy">
+    {%- endif -%}
+
+    {%- comment -%} 2 — rotating pre-workout jar (Pattern A). Empty base → static poster. {%- endcomment -%}
+    <canvas class="khan-duo__jar khan-canvas"
+      data-seq-base="{{ section.settings.jar_seq_base }}"
+      data-seq-base-mobile="{{ section.settings.jar_seq_base_mobile }}"
+      data-seq-frames="{{ section.settings.jar_seq_frames }}"
+      {%- if section.settings.jar_poster != blank %} data-poster="{{ section.settings.jar_poster | image_url: width: 1200 }}"{% endif -%}></canvas>
+
+    {%- comment -%} 4a — pre-workout UI {%- endcomment -%}
+    <div class="khan-duo__ui khan-duo__pre-ui">
+      <span class="khan-eyebrow">{%- render 'khan-asterisk', class: 'khan-asterisk--xs' -%} {{ section.settings.pre_eyebrow }}</span>
+      <h2 class="khan-display khan-display--sm">{{ section.settings.pre_heading }}</h2>
+      {%- if section.settings.pre_copy != blank -%}<p class="khan-duo__copy">{{ section.settings.pre_copy }}</p>{%- endif -%}
+      <div class="khan-duo__cta">
+        {%- render 'khan-button', label: 'RESERVE', variant: 'reserve', count: reserve_count -%}
+        {%- render 'khan-button', label: section.settings.open_label, href: pre.url, icon: true -%}
+      </div>
+      {%- assign chips = section.blocks | where: 'type', 'chip' -%}
+      {%- if chips.size > 0 -%}
+        <ul class="khan-duo__chips" role="list">
+          {%- for block in chips -%}
+            <li {{ block.shopify_attributes }}><span class="khan-chip khan-chip--light">{%- render 'khan-asterisk', class: 'khan-asterisk--xs' -%} {{ block.settings.label }}</span></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} 4b — apparel UI {%- endcomment -%}
+    <div class="khan-duo__ui khan-duo__apparel-ui">
+      <span class="khan-eyebrow">{{ section.settings.apparel_eyebrow }}</span>
+      <h2 class="khan-display khan-display--sm">{{ section.settings.apparel_heading }}</h2>
+      {%- if section.settings.apparel_copy != blank -%}<p class="khan-duo__copy">{{ section.settings.apparel_copy }}</p>{%- endif -%}
+      <div class="khan-duo__cta">
+        {%- render 'khan-button', label: section.settings.archive_label, href: archive_url, icon: true -%}
+        {%- render 'khan-button', label: section.settings.film_label, href: section.settings.film_link, variant: 'outline', icon: true -%}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% stylesheet %}
+.khan-duo { background: var(--khan-bg-light); color: var(--khan-text-on-light); }
+.khan-duo__bg--placeholder { background:
+  linear-gradient(0deg, rgba(0,0,0,.03), rgba(0,0,0,.03)),
+  repeating-linear-gradient(90deg, rgba(0,0,0,.045) 0 1px, transparent 1px 64px),
+  repeating-linear-gradient(0deg, rgba(0,0,0,.045) 0 1px, transparent 1px 64px),
+  var(--khan-bg-light); }
+.khan-duo__jar { position: absolute; left: 4vw; top: 50%; transform: translateY(-50%); width: min(46vw, 620px); height: 80vh; z-index: var(--khan-z-product); pointer-events: none; }
+.khan-duo__model { position: absolute; left: 8vw; bottom: 0; width: min(40vw, 520px); height: auto; z-index: var(--khan-z-video); object-fit: contain; }
+.khan-duo__ui { position: absolute; right: 5vw; width: min(46ch, 44vw); z-index: var(--khan-z-ui); }
+.khan-duo__pre-ui { top: 12vh; }
+.khan-duo__apparel-ui { bottom: 10vh; }
+.khan-duo__copy { color: rgba(0,0,0,.6); margin: 14px 0; max-width: 40ch; }
+.khan-duo__cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--khan-sp-16); margin-top: 18px; }
+.khan-duo .khan-btn--primary { background: var(--khan-black); color: var(--khan-white); }
+.khan-duo__chips { display: flex; flex-wrap: wrap; gap: var(--khan-sp-10); list-style: none; margin: 22px 0 0; padding: 0; }
+@media (max-width: 749px) {
+  .khan-duo__stage { height: auto; min-height: 100vh; }
+  .khan-duo__jar { position: relative; left: 0; top: 0; transform: none; width: 80vw; height: 50vh; margin: 8vh auto 0; }
+  .khan-duo__model { position: relative; left: 0; width: 70vw; margin: 0 auto; display: block; }
+  .khan-duo__ui { position: static; width: auto; padding: 0 6vw 6vh; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "KHAN · S3 Product duo",
+  "tag": "section",
+  "class": "khan-section khan-section--duo",
+  "settings": [
+    { "type": "range", "id": "scroll_length", "label": "Scroll length (%)", "min": 200, "max": 460, "step": 10, "default": 320 },
+    { "type": "header", "content": "Pre-workout" },
+    { "type": "product", "id": "pre_product", "label": "Pre-workout product" },
+    { "type": "text", "id": "pre_eyebrow", "label": "Eyebrow", "default": "SUPPLEMENTS · 01" },
+    { "type": "text", "id": "pre_heading", "label": "Heading", "default": "PRE-WORKOUT" },
+    { "type": "textarea", "id": "pre_copy", "label": "Copy", "default": "Six clinical-dose ingredients. No sweeteners. No filler." },
+    { "type": "text", "id": "reserve_start", "label": "Reserve — current", "default": "047" },
+    { "type": "text", "id": "reserve_limit", "label": "Reserve — limit", "default": "500" },
+    { "type": "text", "id": "open_label", "label": "Product button label", "default": "OPEN THE PRODUCT" },
+    { "type": "header", "content": "Pre-workout jar sequence (Pattern A)" },
+    { "type": "text", "id": "jar_seq_base", "label": "Jar frames base URL", "info": "…/jar_seq/jar_ — JS appends 0000.webp. Blank = static poster." },
+    { "type": "text", "id": "jar_seq_base_mobile", "label": "Jar frames base URL (mobile)" },
+    { "type": "range", "id": "jar_seq_frames", "label": "Jar frame count", "min": 0, "max": 150, "step": 1, "default": 0 },
+    { "type": "image_picker", "id": "jar_poster", "label": "Jar poster (reduced-motion / preload)" },
+    { "type": "header", "content": "Apparel" },
+    { "type": "product", "id": "apparel_product", "label": "Apparel product" },
+    { "type": "image_picker", "id": "model_image", "label": "Apparel model render", "info": "Sits behind the jar's resting spot. Must not be clipped." },
+    { "type": "text", "id": "apparel_eyebrow", "label": "Eyebrow", "default": "APPAREL · 02" },
+    { "type": "text", "id": "apparel_heading", "label": "Heading", "default": "HERITAGE F/W 26" },
+    { "type": "textarea", "id": "apparel_copy", "label": "Copy" },
+    { "type": "text", "id": "archive_label", "label": "Primary button label", "default": "ENTER THE ARCHIVE" },
+    { "type": "text", "id": "film_label", "label": "Outline button label", "default": "WATCH THE FILM" },
+    { "type": "url", "id": "film_link", "label": "Film link" },
+    { "type": "header", "content": "Stage" },
+    { "type": "image_picker", "id": "stage_bg", "label": "Stage background (light / blueprint)" }
+  ],
+  "blocks": [
+    {
+      "type": "chip",
+      "name": "Clinical-dose chip",
+      "settings": [ { "type": "text", "id": "label", "label": "Label", "default": "SIX CLINICAL DOSES" } ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "KHAN · S3 Product duo",
+      "blocks": [
+        { "type": "chip", "settings": { "label": "SIX CLINICAL DOSES" } },
+        { "type": "chip", "settings": { "label": "NO FILLER" } },
+        { "type": "chip", "settings": { "label": "NO SWEETENERS" } },
+        { "type": "chip", "settings": { "label": "CLEAN ENERGY" } },
+        { "type": "chip", "settings": { "label": "PERFORMANCE DRIVEN" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
