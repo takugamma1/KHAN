@@ -124,7 +124,7 @@ span.khan-hero__wordmark { font-size: clamp(48px, 16vw, 220px); line-height: .9;
     { "type": "header", "content": "Red smoke sequence (Pattern A)" },
     { "type": "text", "id": "smoke_seq_base", "label": "Smoke frames base URL", "info": "Public base path up to the frame number, e.g. …/smoke_seq/smoke_ — JS appends 0000.webp. Leave blank to disable (static)." },
     { "type": "text", "id": "smoke_seq_base_mobile", "label": "Smoke frames base URL (mobile set)" },
-    { "type": "range", "id": "smoke_seq_frames", "label": "Smoke frame count", "min": 0, "max": 150, "step": 1, "default": 0, "info": "≤150. 0 = disabled until frames are produced." },
+    { "type": "number", "id": "smoke_seq_frames", "label": "Smoke frame count", "default": 0, "info": "≤150 frames. 0 or blank = disabled until frames are produced." },
     { "type": "image_picker", "id": "smoke_poster", "label": "Smoke poster (reduced-motion / preload still)" },
     { "type": "header", "content": "Identity" },
     { "type": "text", "id": "identity_heading", "label": "Identity heading", "default": "BUILT ON DISCIPLINE" },
