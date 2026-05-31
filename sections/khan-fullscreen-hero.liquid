@@ -1,0 +1,150 @@
+{%- comment -%}
+  KHAN — Fullscreen image/video hero with rocks frame overlay.
+  Layer order (back→front): background video/image · rocks frame (transparent centre
+  reveals the background) · centred white wordmark (subtle CSS breathe).
+{%- endcomment -%}
+
+{%- liquid
+  assign vid = section.settings.background_video | strip
+  assign has_video = false
+  if vid != blank
+    assign has_video = true
+  endif
+-%}
+
+<section
+  id="khan-fs-hero-{{ section.id }}"
+  class="khan-fs-hero"
+  style="--khan-fs-h: {{ section.settings.section_height }}vh; --khan-fs-tint: {{ section.settings.overlay_tint | divided_by: 100.0 }}; --khan-fs-logo-w: {{ section.settings.logo_max_width }}vw;"
+>
+  {%- comment -%} 1 — background: video first, else image, else flat black {%- endcomment -%}
+  <div class="khan-fs-hero__bg" aria-hidden="true">
+    {%- if has_video -%}
+      <video
+        class="khan-fs-hero__media"
+        autoplay muted loop playsinline preload="metadata"
+        {%- if section.settings.background_image != blank %} poster="{{ section.settings.background_image | image_url: width: 1920 }}"{% endif -%}>
+        <source src="{{ vid | asset_url }}" type="video/mp4">
+      </video>
+    {%- elsif section.settings.background_image != blank -%}
+      <img class="khan-fs-hero__media"
+           src="{{ section.settings.background_image | image_url: width: 2560 }}"
+           srcset="{{ section.settings.background_image | image_url: width: 1280 }} 1280w, {{ section.settings.background_image | image_url: width: 2560 }} 2560w"
+           sizes="100vw" alt="" width="2560" height="1440" loading="eager">
+    {%- endif -%}
+    {%- if section.settings.overlay_tint > 0 -%}
+      <span class="khan-fs-hero__tint"></span>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} 2 — rocks frame on top; transparent centre reveals the background {%- endcomment -%}
+  {%- if section.settings.frame_image != blank -%}
+    <img class="khan-fs-hero__frame"
+         src="{{ section.settings.frame_image | image_url: width: 2560 }}"
+         srcset="{{ section.settings.frame_image | image_url: width: 1280 }} 1280w, {{ section.settings.frame_image | image_url: width: 2560 }} 2560w"
+         sizes="100vw" alt="" width="2560" height="1440" loading="eager">
+  {%- endif -%}
+
+  {%- comment -%} 3 — centred white wordmark, subtle breathe {%- endcomment -%}
+  <div class="khan-fs-hero__logo {% if section.settings.logo_pulse %}khan-fs-hero__logo--pulse{% endif %}">
+    {%- if section.settings.logo_image != blank -%}
+      <img class="khan-fs-hero__wordmark {% if section.settings.logo_white %}is-white{% endif %}"
+           src="{{ section.settings.logo_image | image_url: width: 1200 }}"
+           alt="{{ shop.name | escape }}" width="1200" height="384" loading="eager">
+    {%- else -%}
+      <span class="khan-fs-hero__wordmark khan-display is-white">{{ shop.name | default: 'KHAN' }}</span>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+.khan-fs-hero {
+  position: relative;
+  width: 100%;
+  height: var(--khan-fs-h, 100vh);
+  min-height: 480px;
+  overflow: hidden;
+  background: var(--khan-black, #000);
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+.khan-fs-hero__bg { position: absolute; inset: 0; z-index: 1; }
+.khan-fs-hero__media { width: 100%; height: 100%; object-fit: cover; display: block; }
+.khan-fs-hero__tint { position: absolute; inset: 0; background: var(--khan-black, #000); opacity: var(--khan-fs-tint, 0); pointer-events: none; }
+
+.khan-fs-hero__frame {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
+}
+
+.khan-fs-hero__logo {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.khan-fs-hero__wordmark {
+  display: block;
+  width: var(--khan-fs-logo-w, 42vw);
+  max-width: 720px;
+  height: auto;
+  color: var(--khan-white, #fff);
+}
+span.khan-fs-hero__wordmark {
+  width: auto;
+  font-size: clamp(48px, var(--khan-fs-logo-w, 42vw), 240px);
+  line-height: .9;
+  text-align: center;
+}
+/* force any opaque logo to pure white */
+.khan-fs-hero__wordmark.is-white { filter: brightness(0) invert(1); }
+span.khan-fs-hero__wordmark.is-white { filter: none; color: var(--khan-white, #fff); }
+
+/* subtle breathe — scale + opacity, very little */
+.khan-fs-hero__logo--pulse .khan-fs-hero__wordmark {
+  transform-origin: center;
+  animation: khan-fs-breathe var(--khan-pulse-dur, 3.2s) var(--khan-ease, ease-in-out) infinite;
+}
+@keyframes khan-fs-breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.025); opacity: .9; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .khan-fs-hero__logo--pulse .khan-fs-hero__wordmark { animation: none; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "KHAN · Fullscreen Hero",
+  "tag": "section",
+  "class": "khan-section khan-section--fs-hero",
+  "settings": [
+    { "type": "header", "content": "Background" },
+    { "type": "text", "id": "background_video", "label": "Background video — asset filename", "info": "Upload an .mp4 to assets/ (e.g. hero_bg.mp4) and enter the filename. Shown behind the frame. Leave blank to use the image / black." },
+    { "type": "image_picker", "id": "background_image", "label": "Background image / video poster", "info": "Used when no video is set, and as the video poster while it loads." },
+    { "type": "range", "id": "overlay_tint", "label": "Darken background", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 0 },
+    { "type": "header", "content": "Rocks frame (overlay)" },
+    { "type": "image_picker", "id": "frame_image", "label": "Frame image", "info": "Sits ON TOP of the background. Use a PNG with a transparent centre so the video/image shows through." },
+    { "type": "header", "content": "Logo" },
+    { "type": "image_picker", "id": "logo_image", "label": "Wordmark (logo)", "info": "Falls back to the shop name in the display font." },
+    { "type": "checkbox", "id": "logo_white", "label": "Force logo white", "default": true, "info": "Renders any opaque logo as pure white." },
+    { "type": "checkbox", "id": "logo_pulse", "label": "Subtle pulse", "default": true },
+    { "type": "range", "id": "logo_max_width", "label": "Logo width", "min": 20, "max": 70, "step": 1, "unit": "vw", "default": 42 },
+    { "type": "header", "content": "Layout" },
+    { "type": "range", "id": "section_height", "label": "Section height", "min": 60, "max": 100, "step": 1, "unit": "vh", "default": 100 }
+  ],
+  "presets": [
+    {
+      "name": "KHAN · Fullscreen Hero"
+    }
+  ]
+}
+{% endschema %}
